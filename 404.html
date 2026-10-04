@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found | Teedatec</title>
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="light dark">
+  <!-- Absolute paths so this page works for any missing URL depth on GitHub Pages -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="/" aria-label="Teedatec – home">
+        <img class="brand-mark" src="/favicon.svg" width="34" height="34" alt="">
+        <span>Teedatec</span>
+      </a>
+    </div>
+  </header>
+  <main class="page-404">
+    <div class="container">
+      <p class="code">404</p>
+      <h1>Page not found</h1>
+      <p>Sorry, the page you're looking for doesn't exist or has moved.</p>
+      <a class="btn btn-primary" href="/">Back to home</a>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-inner"><p>&copy; Teedatec · Amir Namvar</p></div>
+  </footer>
+</body>
+</html>

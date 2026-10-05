@@ -230,6 +230,13 @@ ul { margin: 0; padding: 0; list-style: none; }
 .about-facts li { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .8rem 1rem; }
 .about-facts strong { display: block; font-size: 1.15rem; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; width: fit-content; }
 .about-facts span { color: var(--muted); font-size: .9rem; }
+.about-langs { margin-top: 1.6rem; }
+.about-langs h3 { font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-text); margin-bottom: .7rem; }
+.lang-list { display: flex; flex-wrap: wrap; gap: .6rem; }
+.lang-list li { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: .15rem .55rem; max-width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: .45rem 1rem; font-size: .95rem; }
+.lang-name { font-weight: 600; color: var(--text); }
+.lang-level { color: var(--muted); font-size: .85rem; }
+.lang-level::before { content: "·"; margin-right: .55rem; color: var(--accent-2); font-weight: 700; }
 
 /* ---------- Experience timeline ---------- */
 .timeline { list-style: none; margin: 0; padding: 0 0 0 1.75rem; position: relative; max-width: 880px; }

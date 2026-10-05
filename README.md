@@ -1,7 +1,7 @@
 # Teedatec — Amir Namvar · Portfolio
 
 Personal portfolio website of **Amir Namvar**, freelance full-stack web developer (brand: **Teedatec**).
-Prepared for **https://teedatec.com** (GitHub Pages + custom domain). Deployment and domain configuration are separate setup steps; uploading this repository does not publish the website.
+Live at **https://teedatec.com** (GitHub Pages + custom domain).
 
 Pure **HTML, CSS and vanilla JavaScript** — no frameworks, no build step, no dependencies.
 
@@ -53,7 +53,7 @@ Open <http://localhost:8000>.
 |------|-------|-----|
 | **Formspree form ID** | `index.html` → `<form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID">` | Create a free form at [formspree.io](https://formspree.io), set its email to `infosomamir@gmail.com`, then replace `YOUR_FORM_ID`. Until replaced, the form opens the visitor's email app (mailto fallback). |
 | **Upwork profile link** | `index.html` → Contact section, `<li hidden data-placeholder="upwork">` | Replace `YOUR_UPWORK_PROFILE` with your real URL and remove the `hidden` attribute. |
-| Lumen live demo | Projects section | The source-code link is provided. Add a live-demo link after deploying and verifying the site. |
+| Lumen live demo | Projects section | Points to `https://som-info.github.io/lumen-landing` — make sure GitHub Pages is enabled for that repo. |
 
 All TODOs are marked with `TODO(owner)` in the source (`grep -rn "TODO(owner)" .`).
 

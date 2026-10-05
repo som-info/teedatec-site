@@ -17,27 +17,89 @@
       } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
     })();
   </script>
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(location.search);
+        var q = (params.get('lang') || '').toLowerCase();
+        var saved = null;
+        try { saved = localStorage.getItem('lang'); } catch (e) {}
+        var nav = (navigator.language || '').toLowerCase();
+        var lang = 'en';
+        if (q === 'en' || q === 'tr' || q === 'fa') lang = q;
+        else if (saved === 'en' || saved === 'tr' || saved === 'fa') lang = saved;
+        else if (nav.indexOf('tr') === 0) lang = 'tr';
+        else if (nav.indexOf('fa') === 0) lang = 'fa';
+        document.documentElement.setAttribute('lang', lang);
+        document.documentElement.setAttribute('dir', lang === 'fa' ? 'rtl' : 'ltr');
+        document.documentElement.setAttribute('data-lang', lang);
+        if (lang === 'fa') {
+          var l = document.createElement('link');
+          l.id = 'font-vazirmatn';
+          l.rel = 'stylesheet';
+          l.href = 'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap';
+          document.head.appendChild(l);
+        }
+      } catch (e) {
+        document.documentElement.setAttribute('lang', 'en');
+        document.documentElement.setAttribute('dir', 'ltr');
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    /* 404 has no mobile nav — keep desktop language switcher visible */
+    @media (max-width: 980px) {
+      .lang-switch:not(.lang-switch-mobile) { display: block; }
+    }
+  </style>
+  <script src="/js/i18n.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (!window.TeedaI18n) return;
+      window.TeedaI18n.init();
+      function sync404Title() {
+        var title = window.TeedaI18n.t('page404_title');
+        if (title) document.title = title;
+        var year = String(new Date().getFullYear());
+        var fc = document.querySelector('[data-i18n-footer-copy]');
+        if (fc) fc.textContent = window.TeedaI18n.format(window.TeedaI18n.t('footer_copy'), { year: year });
+      }
+      sync404Title();
+      document.addEventListener('i18n:change', sync404Title);
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
     <div class="container nav-wrap">
-      <a class="brand" href="/" aria-label="Teedatec – home">
+      <a class="brand" href="/" data-i18n-attr="aria-label:brand_home" aria-label="Teedatec – home">
         <img class="brand-mark" src="/favicon.svg" width="34" height="34" alt="">
         <span>Teedatec</span>
       </a>
+      <div class="lang-switch" data-lang-switch style="margin-inline-start:auto">
+        <button class="lang-switch-btn" type="button" aria-expanded="false" aria-haspopup="listbox" data-i18n-attr="aria-label:lang_aria" aria-label="Language">
+          <span class="lang-switch-code" data-lang-current>EN</span>
+          <svg class="lang-switch-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="lang-switch-menu" role="listbox">
+          <li><button type="button" role="option" data-lang-option="en" aria-pressed="true">EN <span class="lang-switch-name">English</span></button></li>
+          <li><button type="button" role="option" data-lang-option="tr" aria-pressed="false">TR <span class="lang-switch-name">Türkçe</span></button></li>
+          <li><button type="button" role="option" data-lang-option="fa" aria-pressed="false">FA <span class="lang-switch-name">فارسی</span></button></li>
+        </ul>
+      </div>
     </div>
   </header>
   <main class="page-404">
     <div class="container">
       <p class="code">404</p>
-      <h1>Page not found</h1>
-      <p>Sorry, the page you're looking for doesn't exist or has moved.</p>
-      <a class="btn btn-primary" href="/">Back to home</a>
+      <h1 data-i18n="page404_h1">Page not found</h1>
+      <p data-i18n="page404_p">Sorry, the page you're looking for doesn't exist or has moved.</p>
+      <a class="btn btn-primary" href="/" data-i18n="page404_btn">Back to home</a>
     </div>
   </main>
   <footer class="site-footer">
-    <div class="container footer-inner"><p>&copy; Teedatec · Amir Namvar</p></div>
+    <div class="container footer-inner"><p data-i18n-footer-copy>&copy; Teedatec · Amir Namvar</p></div>
   </footer>
 </body>
 </html>

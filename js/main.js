@@ -4,13 +4,23 @@
   var root = document.documentElement;
   root.classList.add('js');
 
+  function tr(key, vars) {
+    if (window.TeedaI18n) return window.TeedaI18n.t(key, vars) || key;
+    return key;
+  }
+
+  /* ---------- i18n ---------- */
+  if (window.TeedaI18n) window.TeedaI18n.init();
+
   /* ---------- Theme toggle ---------- */
   var toggle = document.querySelector('.theme-toggle');
   function applyTheme(theme, persist) {
     root.setAttribute('data-theme', theme);
     if (toggle) {
       var next = theme === 'dark' ? 'light' : 'dark';
-      toggle.setAttribute('aria-label', 'Switch to ' + next + ' theme');
+      var labelKey = next === 'dark' ? 'theme_to_dark' : 'theme_to_light';
+      toggle.setAttribute('aria-label', tr(labelKey));
+      toggle.setAttribute('title', tr('theme_title'));
       toggle.setAttribute('aria-pressed', String(theme === 'dark'));
     }
     if (persist) { try { localStorage.setItem('theme', theme); } catch (e) { /* storage unavailable */ } }
@@ -38,14 +48,17 @@
   function setMenu(open) {
     if (!navToggle || !menu) return;
     navToggle.setAttribute('aria-expanded', String(open));
-    navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    navToggle.setAttribute('aria-label', open ? tr('nav_close') : tr('nav_open'));
     menu.classList.toggle('open', open);
   }
   if (navToggle && menu) {
     navToggle.addEventListener('click', function () {
       setMenu(navToggle.getAttribute('aria-expanded') !== 'true');
     });
-    menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+    menu.addEventListener('click', function (e) {
+      // Close on nav section links, but not on language pills
+      if (e.target.closest('a[href^="#"]')) setMenu(false);
+    });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); navToggle.focus(); }
     });
@@ -89,6 +102,31 @@
   /* ---------- Footer year ---------- */
   var year = document.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
+  // Re-apply footer copy after year is set
+  if (window.TeedaI18n) {
+    var footerCopy = document.querySelector('[data-i18n-footer-copy]');
+    if (footerCopy) {
+      footerCopy.textContent = window.TeedaI18n.format(
+        window.TeedaI18n.t('footer_copy'),
+        { year: year ? year.textContent : String(new Date().getFullYear()) }
+      );
+    }
+  }
+
+  // Keep theme/nav aria labels in sync when language changes
+  document.addEventListener('i18n:change', function () {
+    applyTheme(root.getAttribute('data-theme') || 'light', false);
+    if (navToggle) {
+      var open = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-label', open ? tr('nav_close') : tr('nav_open'));
+    }
+    if (year) {
+      var fc = document.querySelector('[data-i18n-footer-copy]');
+      if (fc) {
+        fc.textContent = window.TeedaI18n.format(tr('footer_copy'), { year: year.textContent });
+      }
+    }
+  });
 
   /* ---------- Contact form ---------- */
   var form = document.getElementById('contact-form');
@@ -104,9 +142,15 @@
     var err = document.getElementById(el.id + '-err');
     var v = el.value.trim();
     var msg = '';
-    if (!v) msg = 'Please enter your ' + (el.name === 'message' ? 'message' : el.name) + '.';
-    else if (el.type === 'email' && !EMAIL_RE.test(v)) msg = 'Please enter a valid email address.';
-    else if (el.name === 'message' && v.length < 10) msg = 'Please write at least 10 characters.';
+    if (!v) {
+      if (el.name === 'name') msg = tr('form_err_required_name');
+      else if (el.name === 'email') msg = tr('form_err_required_email');
+      else msg = tr('form_err_required_message');
+    } else if (el.type === 'email' && !EMAIL_RE.test(v)) {
+      msg = tr('form_err_email');
+    } else if (el.name === 'message' && v.length < 10) {
+      msg = tr('form_err_short');
+    }
     el.setAttribute('aria-invalid', msg ? 'true' : 'false');
     if (msg) el.setAttribute('aria-describedby', err.id); else el.removeAttribute('aria-describedby');
     if (err) err.textContent = msg;
@@ -124,10 +168,10 @@
   }
   function mailtoFallback(data) {
     var to = form.getAttribute('data-mailto') || 'infosomamir@gmail.com';
-    var subject = 'Project inquiry from ' + data.get('name');
+    var subject = tr('form_mailto_subject', { name: data.get('name') });
     var body = data.get('message') + '\n\n— ' + data.get('name') + ' (' + data.get('email') + ')';
     window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    setStatus('Opening your email app… If nothing happens, email me at ' + to + '.', 'ok');
+    setStatus(tr('form_mailto', { email: to }), 'ok');
   }
 
   form.addEventListener('submit', function (e) {
@@ -136,7 +180,7 @@
     if (!ok) {
       var first = form.querySelector('[aria-invalid="true"]');
       if (first) first.focus();
-      setStatus('Please fix the highlighted fields.', 'err');
+      setStatus(tr('form_err_fields'), 'err');
       return;
     }
     var data = new FormData(form);
@@ -145,16 +189,16 @@
     if (action.indexOf(PLACEHOLDER) !== -1 || !window.fetch) { mailtoFallback(data); return; }
 
     submitBtn.disabled = true;
-    setStatus('Sending…');
+    setStatus(tr('form_sending'));
     fetch(action, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
       .then(function (res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         form.reset();
         fields.forEach(function (el) { el.removeAttribute('aria-invalid'); });
-        setStatus('Thanks! Your message has been sent. I\'ll get back to you soon.', 'ok');
+        setStatus(tr('form_ok'), 'ok');
       })
       .catch(function () {
-        setStatus('Sorry, the message could not be sent. Opening your email app instead…', 'err');
+        setStatus(tr('form_fail'), 'err');
         mailtoFallback(data);
       })
       .finally(function () { submitBtn.disabled = false; });

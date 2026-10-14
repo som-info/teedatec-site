@@ -656,6 +656,32 @@
       });
     });
 
+    // Contact details for the Persian version
+    var contactSwap = [
+      ['infosomamir@gmail.com', 'info@teedatec.ir'],
+      ['905556755787', '989106840174'],
+      ['+90 555 675 57 87', '+98 910 684 0174']
+    ];
+    function swapContact(str) {
+      contactSwap.forEach(function (pair) {
+        str = str.split(lang === 'fa' ? pair[0] : pair[1]).join(lang === 'fa' ? pair[1] : pair[0]);
+      });
+      return str;
+    }
+    document.querySelectorAll('a[href^="mailto:"], a[href*="wa.me/"], a[href*="t.me/"]').forEach(function (el) {
+      if (!el.hasAttribute('data-contact-href')) el.setAttribute('data-contact-href', el.getAttribute('href'));
+      el.setAttribute('href', lang === 'fa' ? swapContact(el.getAttribute('data-contact-href')) : el.getAttribute('data-contact-href'));
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      while (walker.nextNode()) {
+        var next = swapContact(walker.currentNode.nodeValue);
+        if (next !== walker.currentNode.nodeValue) walker.currentNode.nodeValue = next;
+      }
+    });
+    document.querySelectorAll('form[data-mailto]').forEach(function (form) {
+      if (!form.hasAttribute('data-contact-mailto')) form.setAttribute('data-contact-mailto', form.getAttribute('data-mailto'));
+      form.setAttribute('data-mailto', lang === 'fa' ? swapContact(form.getAttribute('data-contact-mailto')) : form.getAttribute('data-contact-mailto'));
+    });
+
     // Footer year copy
     var yearEl = document.getElementById('year');
     var footerCopy = document.querySelector('[data-i18n-footer-copy]');

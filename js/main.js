@@ -167,7 +167,7 @@
     status.className = 'form-status' + (kind ? ' ' + kind : '');
   }
   function mailtoFallback(data) {
-    var to = form.getAttribute('data-mailto') || 'infosomamir@gmail.com';
+    var to = form.getAttribute('data-mailto') || 'namvar@teedatec.com';
     var subject = tr('form_mailto_subject', { name: data.get('name') });
     var body = data.get('message') + '\n\n— ' + data.get('name') + ' (' + data.get('email') + ')';
     window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);

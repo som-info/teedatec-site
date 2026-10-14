@@ -658,7 +658,7 @@
 
     // Contact details for the Persian version
     var contactSwap = [
-      ['infosomamir@gmail.com', 'info@teedatec.ir'],
+      ['namvar@teedatec.com', 'info@teedatec.ir'],
       ['905556755787', '989106840174'],
       ['+90 555 675 57 87', '+98 910 684 0174']
     ];
